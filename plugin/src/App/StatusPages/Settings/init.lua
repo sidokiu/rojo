@@ -94,6 +94,15 @@ function SettingsPage:render()
 			contentSize = self.contentSize,
 			transparency = self.props.transparency,
 		}, {
+			DisableLock = e(Setting, {
+				id = "disableLock",
+				name = "Disable Lock",
+				description = "Disables Rojo lock, allowing two users to overwrite the same files",
+				tag = "unstable",
+				transparency = self.props.transparency,
+				layoutOrder = layoutIncrement(),
+			}),
+
 			AutoReconnect = e(Setting, {
 				id = "autoReconnect",
 				name = "Auto Reconnect",

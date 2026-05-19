@@ -27,6 +27,8 @@ local defaultSettings = {
 	logLevel = "Info",
 	timingLogsEnabled = false,
 	priorEndpoints = {},
+
+	disableLock = true
 }
 
 local Settings = {}

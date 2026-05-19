@@ -309,6 +309,11 @@ function App:getHostAndPort()
 end
 
 function App:isSyncLockAvailable()
+	if Settings:get("disableLock") then
+		-- Locking is disabled
+		return true
+	end
+
 	if #Players:GetPlayers() == 0 then
 		-- Team Create is not active, so no one can be holding the lock
 		return true
@@ -567,22 +572,26 @@ function App:useRunningConnectionInfo()
 end
 
 function App:startSession()
-	local claimedLock, priorOwner = self:claimSyncLock()
-	if not claimedLock then
-		local msg = string.format("Could not sync because user '%s' is already syncing", tostring(priorOwner))
+	if Settings:get("disableLock") then
+		Log.trace("Skipping sync lock because user enabled setting `disableLock`")
+	else
+		local claimedLock, priorOwner = self:claimSyncLock()
+		if not claimedLock then
+			local msg = string.format("Could not sync because user '%s' is already syncing", tostring(priorOwner))
 
-		Log.warn(msg)
-		self:addNotification({
-			text = msg,
-			timeout = 10,
-		})
-		self:setState({
-			appStatus = AppStatus.Error,
-			errorMessage = msg,
-			toolbarIcon = Assets.Images.PluginButtonWarning,
-		})
+			Log.warn(msg)
+			self:addNotification({
+				text = msg,
+				timeout = 10,
+			})
+			self:setState({
+				appStatus = AppStatus.Error,
+				errorMessage = msg,
+				toolbarIcon = Assets.Images.PluginButtonWarning,
+			})
 
-		return
+			return
+		end
 	end
 
 	local host, port = self:getHostAndPort()
